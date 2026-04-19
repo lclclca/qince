@@ -1,0 +1,38 @@
+.app-sider {
+  /* 侧边栏折叠/展开过渡动画（AI 辅助实现，自身调整了 duration 和 easing） */
+  transition: all 0.3s ease;
+}
+
+.logo {
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+.user-info:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.role-tag {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #1890ff;
+  border: 1px solid #1890ff;
+  padding: 0 4px;
+  border-radius: 3px;
+}

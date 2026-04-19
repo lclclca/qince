@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.orderms.mapper.OrderMapper">
+
+    <!--
+        resultMap：定义 SQL 查询结果列名 → Java 对象字段的映射关系
+        此处 OrderVO 包含多表关联字段，需要手动配置映射
+    -->
+    <resultMap id="orderVOMap" type="com.example.orderms.dto.OrderVO">
+        <id     property="id"            column="id"/>
+        <result property="orderNo"       column="order_no"/>
+        <result property="customerId"    column="customer_id"/>
+        <result property="customerName"  column="customer_name"/>
+        <result property="customerPhone" column="customer_phone"/>
+        <result property="equipmentId"   column="equipment_id"/>
+        <result property="equipmentCode" column="equipment_code"/>
+        <result property="equipmentName" column="equipment_name"/>
+        <result property="equipmentSpec" column="equipment_spec"/>
+        <result property="orderType"     column="order_type"/>
+        <result property="amount"        column="amount"/>
+        <result property="deliveryDate"  column="delivery_date"/>
+        <result property="status"        column="status"/>
+        <result property="remark"        column="remark"/>
+        <result property="createBy"      column="create_by"/>
+        <result property="createTime"    column="create_time"/>
+        <result property="updateTime"    column="update_time"/>
+    </resultMap>
+
+    <!-- 分页查询（多条件筛选 + 模糊搜索 + 多表联查） -->
+    <select id="selectOrderPage" resultMap="orderVOMap">
+        SELECT
+            o.id,
+            o.order_no,
+            o.customer_id,
+            c.name      AS customer_name,
+            o.equipment_id,
+            e.code      AS equipment_code,
+            e.name      AS equipment_name,
+            o.order_type,
+            o.amount,
+            o.delivery_date,
+            o.status,
+            o.remark,
+            o.create_by,
+            o.create_time,
+            o.update_time
+        FROM orders o
+        LEFT JOIN customer  c ON o.customer_id  = c.id
+        LEFT JOIN equipment e ON o.equipment_id = e.id
+        <where>
+            <!-- MyBatis 动态 SQL：<if test="..."> 仅当条件非空时才追加 WHERE 子句 -->
+            <if test="param.orderType != null and param.orderType != ''">
+                AND o.order_type = #{param.orderType}
+            </if>
+            <if test="param.status != null and param.status != ''">
+                AND o.status = #{param.status}
+            </if>
+            <if test="param.deliveryStart != null">
+                AND o.delivery_date &gt;= #{param.deliveryStart}
+            </if>
+            <if test="param.deliveryEnd != null">
+                AND o.delivery_date &lt;= #{param.deliveryEnd}
+            </if>
+            <if test="param.keyword != null and param.keyword != ''">
+                AND (
+                    o.order_no    ILIKE CONCAT('%', #{param.keyword}, '%')
+                    OR c.name     ILIKE CONCAT('%', #{param.keyword}, '%')
+                    OR e.code     ILIKE CONCAT('%', #{param.keyword}, '%')
+                )
+            </if>
+        </where>
+        ORDER BY o.create_time DESC
+    </select>
+
+    <!-- 订单详情（含客户联系方式、设备规格） -->
+    <select id="selectOrderDetail" resultMap="orderVOMap">
+        SELECT
+            o.id,
+            o.order_no,
+            o.customer_id,
+            c.name      AS customer_name,
+            c.phone     AS customer_phone,
+            o.equipment_id,
+            e.code      AS equipment_code,
+            e.name      AS equipment_name,
+            e.spec      AS equipment_spec,
+            o.order_type,
+            o.amount,
+            o.delivery_date,
+            o.status,
+            o.remark,
+            o.create_by,
+            o.create_time,
+            o.update_time
+        FROM orders o
+        LEFT JOIN customer  c ON o.customer_id  = c.id
+        LEFT JOIN equipment e ON o.equipment_id = e.id
+        WHERE o.id = #{id}
+    </select>
+
+    <!-- 校验同客户同设备当日是否已存在订单 -->
+    <!-- DATE(create_time) 在 PostgreSQL 中将 timestamp 截断为日期 -->
+    <select id="countDuplicateOrder" resultType="int">
+        SELECT COUNT(1)
+        FROM orders
+        WHERE customer_id  = #{customerId}
+          AND equipment_id = #{equipmentId}
+          AND DATE(create_time) = CURRENT_DATE
+          <if test="excludeId != null">
+              AND id != #{excludeId}
+          </if>
+    </select>
+
+</mapper>
