@@ -4,8 +4,8 @@
 
 -- 用户（密码均为 Admin123! 的 BCrypt 哈希）
 INSERT INTO sys_user (username, password, real_name, role) VALUES
-('admin',    '$2a$10$7EqJtq98hPqEX7fNZaFWoOe5pqQOqdPQbA3Tt3vLMU9EbFoZbOhXi', '管理员', 'ADMIN'),
-('operator', '$2a$10$7EqJtq98hPqEX7fNZaFWoOe5pqQOqdPQbA3Tt3vLMU9EbFoZbOhXi', '操作员', 'OPERATOR')
+('admin',    '$2b$10$gWaE3ddwbZlIT.KXp9NMoOKPynYxa.YmegnRViCqoF9CzKAH2mRxO', '管理员', 'ADMIN'),
+('operator', '$2b$10$gWaE3ddwbZlIT.KXp9NMoOKPynYxa.YmegnRViCqoF9CzKAH2mRxO', '操作员', 'OPERATOR')
 ON CONFLICT (username) DO NOTHING;
 
 -- 客户

@@ -17,8 +17,7 @@ public class SysUser {
 
     private String username;
 
-    /** 存储 BCrypt 加密后的密码，查询时不返回给前端 */
-    @TableField(select = false)
+    /** 存储 BCrypt 加密后的密码（密码保护由 VO 层处理，此处需要参与查询供 Security 认证使用） */
     private String password;
 
     private String realName;
