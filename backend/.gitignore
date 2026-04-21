@@ -1,0 +1,16 @@
+# Maven 编译输出目录（不需要上传，每次 mvn build 自动生成）
+target/
+
+# IDE 配置文件
+.idea/
+*.iml
+.classpath
+.project
+.settings/
+
+# 日志文件
+*.log
+logs/
+
+# 环境配置（如有本地配置覆盖）
+application-local.yml
