@@ -6,7 +6,7 @@ spring:
     # PostgreSQL 连接配置（格式与 Oracle 的 jdbc:oracle:thin:@host:port:sid 类似）
     url: jdbc:postgresql://localhost:5432/order_ms
     username: postgres
-    password: "1"
+    password: "postgres123"
     driver-class-name: org.postgresql.Driver
 
   data:
