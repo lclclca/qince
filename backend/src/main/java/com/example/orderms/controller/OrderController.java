@@ -81,14 +81,18 @@ public class OrderController {
     /**
      * DELETE /api/orders - 批量删除（仅 PENDING 状态，仅管理员）
      * Body: {"ids": [1, 2, 3]}
+     * 注意：JSON 数字默认被 Jackson 解析为 Integer，需要用 Number 转换为 Long
      */
     @DeleteMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public Result<?> delete(@RequestBody Map<String, List<Long>> body) {
-        List<Long> ids = body.get("ids");
-        if (ids == null || ids.isEmpty()) {
+    public Result<?> delete(@RequestBody Map<String, List<?>> body) {
+        List<?> rawIds = body.get("ids");
+        if (rawIds == null || rawIds.isEmpty()) {
             return Result.fail("ids 不能为空");
         }
+        List<Long> ids = rawIds.stream()
+                .map(id -> ((Number) id).longValue())
+                .collect(java.util.stream.Collectors.toList());
         orderService.delete(ids);
         return Result.ok();
     }
