@@ -43,13 +43,11 @@ public class GlobalExceptionHandler {
         return Result.error(403, "权限不足，无法执行该操作");
     }
 
-    /** 兜底：未知系统异常 → 500（调试模式：返回具体异常信息） */
+    /** 兜底：未知系统异常 → 500 */
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public Result<?> handleGeneral(Exception e) {
         log.error("系统异常", e);
-        // 返回具体错误信息便于调试定位问题
-        String detail = e.getClass().getSimpleName() + ": " + e.getMessage();
-        return Result.error(500, detail);
+        return Result.error(500, "系统内部错误，请联系管理员");
     }
 }
