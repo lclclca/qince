@@ -11,7 +11,7 @@ export default defineConfig({
     port: 3000,
     host: true,           // 允许外部访问
     strictPort: true,
-    allowedHosts: 'all',  // 允许所有 host（解决 ngrok 403 问题）
+    allowedHosts: true,   // 允许所有 host（解决 ngrok 403 问题）
     // 开发时代理 API 请求到后端，解决跨域问题
     proxy: {
       '/api': {
